@@ -84,7 +84,40 @@ int main()
 
 void moveOddItemsToBack(LinkedList *ll)
 {
-	/* add your code here */
+	// 예외조건 : list가 비어있을 시,
+	if (ll == NULL || ll->size == 0)
+		return;
+
+	// 준비물 :
+	int originalSize = ll->size;
+	int idx = 0;
+	int end = originalSize;
+
+	// 작업 조건 : idx < end => idx == end일 시, 종료
+	while (idx < end)
+	{
+		// 현재 idx 노드값 가져오기
+		ListNode *cur = findNode(ll, idx);
+		if (cur == NULL)
+			return;
+		// 짝수 일시 , => 무시 하고 넘기기 : idx++;
+		if (cur->item % 2 == 0)
+			idx++;
+		// 홀수 일시,
+		else
+		{
+			// 1.임시 저장
+			int oddVal = cur->item;
+
+			// 2. 그 노드 삭제
+			removeNode(ll, idx);
+			// 3. 삭제된 노드 뒤로 삽입
+			insertNode(ll, ll->size, oddVal);
+			// insertNode(ll, end-1, oddVal); (x)
+			// 4. end 업데이트 => 뒤로 삽입된 애 제외한 범위 잡기
+			end--;
+		}
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
