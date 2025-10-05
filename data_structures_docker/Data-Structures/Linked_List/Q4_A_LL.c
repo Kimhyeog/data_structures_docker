@@ -84,7 +84,7 @@ int main()
 
 void moveEvenItemsToBack(LinkedList *ll)
 {
-	if (ll == NULL || ll->size <= 0)
+	if (ll == NULL || ll->head == NULL)
 		return;
 
 	int originalSize = ll->size;
@@ -108,7 +108,7 @@ void moveEvenItemsToBack(LinkedList *ll)
 			insertNode(ll, ll->size, evenVal);
 
 			end--;
-				}
+		}
 	}
 }
 
