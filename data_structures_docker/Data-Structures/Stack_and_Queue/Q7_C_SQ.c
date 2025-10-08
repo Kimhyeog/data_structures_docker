@@ -8,6 +8,7 @@ Purpose: Implementing the required functions for Question 7 */
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define MIN_INT -1000
 
@@ -17,14 +18,13 @@ typedef struct _listnode
 {
 	int item;
 	struct _listnode *next;
-} ListNode;	// You should not change the definition of ListNode
+} ListNode; // You should not change the definition of ListNode
 
 typedef struct _linkedlist
 {
 	int size;
 	ListNode *head;
-} LinkedList;	// You should not change the definition of LinkedList
-
+} LinkedList; // You should not change the definition of LinkedList
 
 typedef struct stack
 {
@@ -44,7 +44,7 @@ void removeAllItemsFromStack(Stack *s);
 
 void printList(LinkedList *ll);
 void removeAllItems(LinkedList *ll);
-ListNode * findNode(LinkedList *ll, int index);
+ListNode *findNode(LinkedList *ll, int index);
 int insertNode(LinkedList *ll, int index, int value);
 int removeNode(LinkedList *ll, int index);
 
@@ -71,7 +71,6 @@ int main()
 	printf("2: Check whether expressions comprised of the characters ()[]{} is balanced:\n");
 	printf("0: Quit:\n");
 
-
 	while (c != 0)
 	{
 		printf("Please input your choice(1/2/0): ");
@@ -83,11 +82,11 @@ int main()
 			printf("Enter expressions without spaces to check whether it is balanced or not: ");
 			scanf("%s", str);
 			break;
-        case 2:
-            if(balanced(str))
-                printf("not balanced!\n");
-            else
-                printf("balanced!\n");
+		case 2:
+			if (balanced(str))
+				printf("not balanced!\n");
+			else
+				printf("balanced!\n");
 			break;
 		case 0:
 			break;
@@ -95,7 +94,6 @@ int main()
 			printf("Choice unknown;\n");
 			break;
 		}
-
 	}
 
 	return 0;
@@ -104,7 +102,53 @@ int main()
 ////////////////////////////////////////////////////////////
 int balanced(char *expression)
 {
-/* add your code here */
+	if (expression == NULL)
+		return 0;
+
+	int len = strlen(expression);
+	int idx = 0;
+
+	Stack temp;
+	temp.ll.head = NULL;
+	temp.ll.size = 0;
+
+	while (idx < len)
+	{
+		char ch = expression[idx];
+		// 인덱스를 꺼낸 후, 증감시켜놓는게 좋음
+		idx++;
+		// 문자하나 비교는 ""(X) '' (O)
+		if (ch == '(' || ch == '[' || ch == '{')
+			push(&temp, ch);
+		else
+		{
+
+			// peek를 해야하는 상황이 있기에, stack 비어있는지 체크
+			if (isEmptyStack(&temp))
+				return 0;
+
+			char top = peek(&temp);
+			if (ch == '}' && top != '{')
+			{
+				return 0;
+			}
+			else if (ch == ']' && top != '[')
+			{
+				return 0;
+			}
+			else if (ch == ')' && top != '(')
+			{
+				return 0;
+			}
+
+			pop(&temp);
+		}
+	}
+
+	if (isEmptyStack(&temp))
+		return 1;
+	else
+		return 0;
 }
 
 ////////////////////////////////////////////////////////////
@@ -119,13 +163,13 @@ void removeAllItemsFromStack(Stack *s)
 	}
 }
 
-
 void removeAllItems(LinkedList *ll)
 {
 	ListNode *cur = ll->head;
 	ListNode *tmp;
 
-	while (cur != NULL){
+	while (cur != NULL)
+	{
 		tmp = cur->next;
 		free(cur);
 		cur = tmp;
@@ -154,11 +198,12 @@ int pop(Stack *s)
 		return MIN_INT;
 }
 
-int peek(Stack *s){
-    if(isEmptyStack(s))
-        return MIN_INT;
-    else
-        return ((s->ll).head)->item;
+int peek(Stack *s)
+{
+	if (isEmptyStack(s))
+		return MIN_INT;
+	else
+		return ((s->ll).head)->item;
 }
 
 int isEmptyStack(Stack *s)
@@ -169,8 +214,8 @@ int isEmptyStack(Stack *s)
 		return 0;
 }
 
-
-void printList(LinkedList *ll){
+void printList(LinkedList *ll)
+{
 
 	ListNode *cur;
 	if (ll == NULL)
@@ -187,7 +232,8 @@ void printList(LinkedList *ll){
 	printf("\n");
 }
 
-ListNode * findNode(LinkedList *ll, int index){
+ListNode *findNode(LinkedList *ll, int index)
+{
 
 	ListNode *temp;
 
@@ -199,7 +245,8 @@ ListNode * findNode(LinkedList *ll, int index){
 	if (temp == NULL || index < 0)
 		return NULL;
 
-	while (index > 0){
+	while (index > 0)
+	{
 		temp = temp->next;
 		if (temp == NULL)
 			return NULL;
@@ -209,7 +256,8 @@ ListNode * findNode(LinkedList *ll, int index){
 	return temp;
 }
 
-int insertNode(LinkedList *ll, int index, int value){
+int insertNode(LinkedList *ll, int index, int value)
+{
 
 	ListNode *pre, *cur;
 
@@ -217,7 +265,8 @@ int insertNode(LinkedList *ll, int index, int value){
 		return -1;
 
 	// If empty list or inserting first node, need to update head pointer
-	if (ll->head == NULL || index == 0){
+	if (ll->head == NULL || index == 0)
+	{
 		cur = ll->head;
 		ll->head = malloc(sizeof(ListNode));
 		if (ll->head == NULL)
@@ -230,10 +279,10 @@ int insertNode(LinkedList *ll, int index, int value){
 		return 0;
 	}
 
-
 	// Find the nodes before and at the target position
 	// Create a new node and reconnect the links
-	if ((pre = findNode(ll, index - 1)) != NULL){
+	if ((pre = findNode(ll, index - 1)) != NULL)
+	{
 		cur = pre->next;
 		pre->next = malloc(sizeof(ListNode));
 		if (pre->next == NULL)
@@ -249,8 +298,8 @@ int insertNode(LinkedList *ll, int index, int value){
 	return -1;
 }
 
-
-int removeNode(LinkedList *ll, int index){
+int removeNode(LinkedList *ll, int index)
+{
 
 	ListNode *pre, *cur;
 
@@ -259,7 +308,8 @@ int removeNode(LinkedList *ll, int index){
 		return -1;
 
 	// If removing first node, need to update head pointer
-	if (index == 0){
+	if (index == 0)
+	{
 		cur = ll->head->next;
 		free(ll->head);
 		ll->head = cur;
@@ -269,7 +319,8 @@ int removeNode(LinkedList *ll, int index){
 
 	// Find the nodes before and after the target position
 	// Free the target node and reconnect the links
-	if ((pre = findNode(ll, index - 1)) != NULL){
+	if ((pre = findNode(ll, index - 1)) != NULL)
+	{
 
 		if (pre->next == NULL)
 			return -1;
