@@ -15,14 +15,13 @@ typedef struct _listnode
 {
 	int item;
 	struct _listnode *next;
-} ListNode;			// You should not change the definition of ListNode
+} ListNode; // You should not change the definition of ListNode
 
 typedef struct _linkedlist
 {
 	int size;
 	ListNode *head;
-} LinkedList;			// You should not change the definition of LinkedList
-
+} LinkedList; // You should not change the definition of LinkedList
 
 //////////////////////// function prototypes /////////////////////////////////////
 
@@ -31,10 +30,9 @@ int moveMaxToFront(ListNode **ptrHead);
 
 void printList(LinkedList *ll);
 void removeAllItems(LinkedList *ll);
-ListNode * findNode(LinkedList *ll, int index);
+ListNode *findNode(LinkedList *ll, int index);
 int insertNode(LinkedList *ll, int index, int value);
 int removeNode(LinkedList *ll, int index);
-
 
 //////////////////////////// main() //////////////////////////////////////////////
 
@@ -44,10 +42,9 @@ int main()
 	c = 1;
 
 	LinkedList ll;
-	//Initialize the linked list 1 as an empty linked list
+	// Initialize the linked list 1 as an empty linked list
 	ll.head = NULL;
 	ll.size = 0;
-
 
 	printf("1: Insert an integer to the linked list:\n");
 	printf("2: Move the largest stored value to the front of the list:\n");
@@ -63,12 +60,12 @@ int main()
 		case 1:
 			printf("Input an integer that you want to add to the linked list: ");
 			scanf("%d", &i);
-			j=insertNode(&ll, ll.size, i);
+			j = insertNode(&ll, ll.size, i);
 			printf("The resulting linked list is: ");
 			printList(&ll);
 			break;
 		case 2:
-			moveMaxToFront(&(ll.head));  // You need to code this function
+			moveMaxToFront(&(ll.head)); // You need to code this function
 			printf("The resulting linked list after moving largest stored value to the front of the list is: ");
 			printList(&ll);
 			removeAllItems(&ll);
@@ -86,14 +83,58 @@ int main()
 
 ////////////////////////////////////////////////////////////////////////
 
+// 호출자 쪽의 head 값을 직접 바꾸려면 head의 주소를 넘겨야 함
+// head로 지정된 노드가 바뀌는 상황일 떄, 투포인터 사용함
 int moveMaxToFront(ListNode **ptrHead)
 {
-    /* add your code here */
+	// 1. 예외조건 : head가 없는 경우 || head가 지칭하는 노드가 비어있는 경우
+	if (ptrHead == NULL || *ptrHead == NULL)
+		return -1;
+	// 2. 변수 초기화
+	// 탐색대원 2명 : cur , prev
+	ListNode *prev = NULL;
+	ListNode *cur = *ptrHead;
+	// 탐색대원 2명 : maxNode와 그 이전 노드 저장용
+	ListNode *maxPrev = NULL;
+	ListNode *maxNode = *ptrHead;
+
+	while (cur != NULL)
+	{
+		// 더 큰놈이 나타났다면, 업데이트
+		if (cur->item > maxNode->item)
+		{
+			maxNode = cur;
+			maxPrev = prev;
+		}
+
+		// 발자취
+		prev = cur;
+		cur = cur->next;
+	}
+
+	// 탐색 결과가 head에서 멈췄다면, => max가 이미 head에 존재
+	if (maxPrev == NULL)
+		return 0;
+
+	// 아니라면,
+
+	// 3. maxNode의 연결 해제 작업
+	maxPrev->next = maxNode->next;
+
+	// 4. head를 maxNode의 주소값으로 업데이트
+	// 이전 head의 노드를 maxNode의 next로 지정
+	maxNode->next = *ptrHead;
+
+	// 5. head를 maxNode로 지정
+	*ptrHead = maxNode;
+
+	return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
 
-void printList(LinkedList *ll){
+void printList(LinkedList *ll)
+{
 
 	ListNode *cur;
 	if (ll == NULL)
@@ -110,7 +151,8 @@ void printList(LinkedList *ll){
 	printf("\n");
 }
 
-ListNode * findNode(LinkedList *ll, int index){
+ListNode *findNode(LinkedList *ll, int index)
+{
 
 	ListNode *temp;
 
@@ -122,7 +164,8 @@ ListNode * findNode(LinkedList *ll, int index){
 	if (temp == NULL || index < 0)
 		return NULL;
 
-	while (index > 0){
+	while (index > 0)
+	{
 		temp = temp->next;
 		if (temp == NULL)
 			return NULL;
@@ -132,7 +175,8 @@ ListNode * findNode(LinkedList *ll, int index){
 	return temp;
 }
 
-int insertNode(LinkedList *ll, int index, int value){
+int insertNode(LinkedList *ll, int index, int value)
+{
 
 	ListNode *pre, *cur;
 
@@ -140,7 +184,8 @@ int insertNode(LinkedList *ll, int index, int value){
 		return -1;
 
 	// If empty list or inserting first node, need to update head pointer
-	if (ll->head == NULL || index == 0){
+	if (ll->head == NULL || index == 0)
+	{
 		cur = ll->head;
 		ll->head = malloc(sizeof(ListNode));
 		ll->head->item = value;
@@ -149,10 +194,10 @@ int insertNode(LinkedList *ll, int index, int value){
 		return 0;
 	}
 
-
 	// Find the nodes before and at the target position
 	// Create a new node and reconnect the links
-	if ((pre = findNode(ll, index - 1)) != NULL){
+	if ((pre = findNode(ll, index - 1)) != NULL)
+	{
 		cur = pre->next;
 		pre->next = malloc(sizeof(ListNode));
 		pre->next->item = value;
@@ -164,8 +209,8 @@ int insertNode(LinkedList *ll, int index, int value){
 	return -1;
 }
 
-
-int removeNode(LinkedList *ll, int index){
+int removeNode(LinkedList *ll, int index)
+{
 
 	ListNode *pre, *cur;
 
@@ -174,7 +219,8 @@ int removeNode(LinkedList *ll, int index){
 		return -1;
 
 	// If removing first node, need to update head pointer
-	if (index == 0){
+	if (index == 0)
+	{
 		cur = ll->head->next;
 		free(ll->head);
 		ll->head = cur;
@@ -185,7 +231,8 @@ int removeNode(LinkedList *ll, int index){
 
 	// Find the nodes before and after the target position
 	// Free the target node and reconnect the links
-	if ((pre = findNode(ll, index - 1)) != NULL){
+	if ((pre = findNode(ll, index - 1)) != NULL)
+	{
 
 		if (pre->next == NULL)
 			return -1;
@@ -205,7 +252,8 @@ void removeAllItems(LinkedList *ll)
 	ListNode *cur = ll->head;
 	ListNode *tmp;
 
-	while (cur != NULL){
+	while (cur != NULL)
+	{
 		tmp = cur->next;
 		free(cur);
 		cur = tmp;
